@@ -63,7 +63,8 @@ bot.on("message", (msg) => {
 	if (command === "shop") {
 		if (!shopCommandsList.includes(args[1])) return;
 		const shopCommands = new ShopCommands(msg, args);
-		shopCommands[args[1]]();
+		// shopCommands[args[1]]();
+		shopCommands.checkUser();
 	}
 });
 

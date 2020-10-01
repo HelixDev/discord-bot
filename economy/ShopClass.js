@@ -1,4 +1,4 @@
-const { MessageMentions, MessageAttachment, MessageEmbed } = require("discord.js");
+const { MessageEmbed } = require("discord.js");
 const ShopOperations = require("./ShopOperations.js");
 const operations = new ShopOperations();
 const { nanoid } = require("nanoid");
@@ -119,6 +119,8 @@ module.exports = class {
     const name = this.args[2];
     const quantity = Number(this.args[3]);
 
+    if (!name || !quantity || quantity < 0) return this.send(`you have provided invalid item data`);
+
     const res = await operations.supplyItem({ name, quantity, serverId: this.serverId });
     if (res.error) return this.send(res.error);
     return this.send(
@@ -131,6 +133,8 @@ module.exports = class {
       return this.send("you don't have access to this command");
     const name = this.args[2];
     const price = Number(this.args[3]);
+
+    if (!name || !price || price < 0) return this.send(`you have provided invalid item data`);
 
     const res = await operations.changeItemPrice({ name, price, serverId: this.serverId });
     if (res.error) return this.send(res.error);

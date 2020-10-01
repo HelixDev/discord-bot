@@ -1,4 +1,4 @@
-const { MessageMentions, MessageAttachment, MessageEmbed } = require("discord.js");
+const { MessageAttachment, MessageEmbed } = require("discord.js");
 
 const snekfetch = require("snekfetch");
 

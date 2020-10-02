@@ -214,4 +214,17 @@ blacklistFlags=nsfw,racist`;
     const { summary } = filteredData[Math.floor(Math.random() * filteredData.length)];
     return this.send(summary);
   }
+
+  async quote() {
+    const res = await fetch("https://type.fit/api/quotes");
+    const data = await res.json();
+    const { text, author } = data[Math.floor(Math.random() * data.length)];
+    return this.send(`> ${text}\n-${author}`);
+  }
+
+  invite() {
+    return this.send(
+      "https://discord.com/oauth2/authorize?client_id=757244481299808339&scope=bot&permissions=8"
+    );
+  }
 };

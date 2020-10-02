@@ -63,11 +63,9 @@ module.exports = class {
 		await item.updateOne({ $inc: { quantity: -1 } });
 		await user.updateOne({ $inc: { balance: item.price * -1 } });
 
-		const userItem = await UserItem.findOne({ name, serverId });
-		if (userItem) {
-			await userItem.updateOne({ $inc: { quantity: 1 } });
-			return { item };
-		} else {
+		const userItem = await UserItem.findOneAndUpdate({ name, serverId }, { $inc: { quantity: 1 } });
+
+		if (!userItem) {
 			const newItemObj = {
 				id: item.id,
 				serverId: item.serverId,
@@ -77,13 +75,15 @@ module.exports = class {
 			};
 			const newItem = new UserItem(newItemObj);
 			await newItem.save();
+			console.log("new items added");
 			return { item };
 		}
+		console.log("item updated");
+		return { item };
 	}
 
 	async showShop(serverId) {
 		const items = await ShopItem.find({ serverId }, "-_id -__v").lean();
-		console.log(items);
 		if (items.length === 0) return { error: "shop is empty" };
 		return { items };
 	}

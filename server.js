@@ -25,7 +25,7 @@ bot.on("ready", () => {
 
 const gifActionsList = ["kill", "kiss", "punch", "hug", "pat", "feed", "lick", "succ", "slap", "love"];
 
-const commandsList = ["random", "meme", "rateFlirt", "fact", "joke", "truth"];
+const commandsList = ["random", "meme", "rateFlirt", "fact", "joke", "truth", "quote", "invite"];
 
 const shopCommandsList = [
 	"show",

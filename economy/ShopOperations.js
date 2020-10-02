@@ -63,7 +63,10 @@ module.exports = class {
 		await item.updateOne({ $inc: { quantity: -1 } });
 		await user.updateOne({ $inc: { balance: item.price * -1 } });
 
-		const userItem = await UserItem.findOneAndUpdate({ name, serverId }, { $inc: { quantity: 1 } });
+		const userItem = await UserItem.findOneAndUpdate(
+			{ name, serverId, ownerId: id },
+			{ $inc: { quantity: 1 } }
+		);
 
 		if (!userItem) {
 			const newItemObj = {

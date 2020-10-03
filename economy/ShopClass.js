@@ -162,6 +162,7 @@ module.exports = class {
     const serverId = this.serverId;
 
     if (!receiverId) return this.send("you have to mention the user you want to send coins to");
+    if (!amount) return this.send("you have to specify the amount of coins you want to send");
 
     const res = await operations.pay({ senderId, receiverId, amount, serverId });
     if (res.error) return this.send(res.error);

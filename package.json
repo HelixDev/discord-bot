@@ -16,6 +16,7 @@
     "duckduckgo-images-api": "^1.0.5",
     "googleapis": "^60.0.1",
     "isomorphic-unfetch": "^3.0.0",
+    "moment": "^2.29.0",
     "mongoose": "^5.10.7",
     "nanoid": "^3.1.12",
     "snekfetch": "^4.0.4"

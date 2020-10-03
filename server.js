@@ -37,6 +37,9 @@ const shopCommandsList = [
 	"remove",
 	"supply",
 	"change_price",
+	"leaderboard",
+	"pay",
+	"claim",
 ];
 
 bot.on("message", (msg) => {

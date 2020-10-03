@@ -26,7 +26,8 @@ module.exports = class {
     const user = {
       id: this.msg.author.id,
       serverId: this.serverId,
-      balance: 0,
+      balance: 9999,
+      lastClaim: Date.now(),
     };
 
     const res = await operations.createUser(user);
@@ -139,5 +140,40 @@ module.exports = class {
     const res = await operations.changeItemPrice({ name, price, serverId: this.serverId });
     if (res.error) return this.send(res.error);
     return this.send(`you have updated ${res.item.name}'s price to ${res.item.price}`);
+  }
+
+  async leaderboard() {
+    const res = await operations.leaderboard(this.serverId);
+    if (res.error) return this.send(res.error);
+    const embed = new MessageEmbed()
+      .setColor(0x00a2e8)
+      .setTitle("Leaderboard")
+      .setDescription("Top 10 users:");
+    res.board.forEach((user, i) => {
+      embed.addField(i + 1, `<@${user.id}>: ${user.balance} :coin:`);
+    });
+    return this.send(embed);
+  }
+
+  async pay() {
+    const senderId = this.msg.author.id;
+    const receiverId = this.msg.mentions.users.first();
+    const amount = Number(this.args[3]);
+    const serverId = this.serverId;
+
+    if (!receiverId) return this.send("you have to mention the user you want to send coins to");
+
+    const res = await operations.pay({ senderId, receiverId, amount, serverId });
+    if (res.error) return this.send(res.error);
+    return this.send(`${amount} coins have been sent to <@${receiverId}>`);
+  }
+
+  async claim() {
+    const freeCoinsAmount = Number(process.env.FREE_COINS_AMOUNT);
+    const res = await operations.claim({ id: this.msg.author.id, serverId: this.serverId });
+    if (res.error) return this.send(res.error);
+    return this.send(
+      `you have claimed your free ${freeCoinsAmount} coins, new balance is ${res.balance}`
+    );
   }
 };

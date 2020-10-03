@@ -1,6 +1,7 @@
 const User = require("../models/User.js");
 const UserItem = require("../models/UserItem.js");
 const ShopItem = require("../models/ShopItem.js");
+const moment = require("moment");
 
 module.exports = class {
 	constructor() {}
@@ -109,5 +110,56 @@ module.exports = class {
 		).lean();
 		if (!newItem) return { error: "item not found" };
 		return { item: newItem };
+	}
+
+	async pay({ senderId, receiverId, amount, serverId }) {
+		//later
+		const sender = await User.findOne({ serverId, id: senderId });
+		if (!sender) return { error: "you are not registered" };
+
+		const receiver = await User.findOne({ serverId, id: receiverId });
+		if (!receiver) return { error: "the receiver isn't registered" };
+
+		if (sender.balance < amount) return { error: "you don't have enough coins to give" };
+
+		await sender.updateOne({ $inc: { balance: amount * -1 } });
+		await receiver.updateOne({ $inc: { balance: amount } });
+
+		return { sender: sender.lean(), receiver: receiver.lean() };
+	}
+
+	async leaderboard(serverId) {
+		//later
+		const board = await User.find({ serverId }, "-_id -__v")
+			.limit(10)
+			.sort({ balance: -1 })
+			.lean()
+			.exec();
+
+		if (board.length === 0) return { error: "there is no data for this server" };
+		return { board };
+	}
+
+	async claim({ serverId, id }) {
+		try {
+			const freeCoinsAmount = Number(process.env.FREE_COINS_AMOUNT);
+			const user = await User.findOne({ serverId, id });
+			if (!user) return { error: "user isn't registered" };
+
+			const now = Date.now();
+			const timeDifference = now - user.lastClaim;
+			const targetTime = moment(user.lastClaim + 300000);
+			const dif = moment(targetTime.diff(now)).format("mm:ss");
+
+			if (timeDifference < 300000)
+				return {
+					error: `you have to wait ${dif} before claiming your free coins again`,
+				};
+
+			await user.updateOne({ $inc: { balance: freeCoinsAmount }, lastClaim: Date.now() });
+			return { balance: user.balance + freeCoinsAmount };
+		} catch (e) {
+			console.log(e);
+		}
 	}
 };

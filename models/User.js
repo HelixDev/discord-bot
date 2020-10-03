@@ -13,6 +13,10 @@ const userSchema = mongoose.Schema({
         type: Number,
         required: true,
     },
+    lastClaim: {
+        type: Number,
+        required: true,
+    },
 });
 
 module.exports = mongoose.model("users", userSchema);
